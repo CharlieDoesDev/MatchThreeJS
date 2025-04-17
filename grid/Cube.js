@@ -26,7 +26,7 @@ export class Cube {
     }
 
     update(delta) {
-        const targetZ = this.hovered ? 0.5 : 0;
+        const targetZ = this.hovered ? -1 : 0;
         this.targetZ += (targetZ - this.targetZ) * 0.1;
         
         this.mesh.position.z = THREE.MathUtils.lerp(
