@@ -2,9 +2,9 @@
  * CONFIGURATION VARIABLES
  *****************************/
 const CAMERA_CONFIG = {
-    RADIUS: 25,                          // Distance from grid center
-    FIXED_THETA: 0,                      // Front-facing angle
-    FIXED_PHI: 0 * Math.PI / 180,       // 60 degree downward angle
+    X: 0,
+    Y:0,
+    Z: -10,
     ASPECT_RATIO: window.innerWidth / window.innerHeight
   };
   
@@ -35,12 +35,8 @@ const CAMERA_CONFIG = {
    * CAMERA POSITIONING
    *****************************/
   function setFixedCamera() {
-    // Convert spherical to cartesian coordinates
-    const x = CAMERA_CONFIG.RADIUS * Math.sin(CAMERA_CONFIG.FIXED_PHI) * Math.cos(CAMERA_CONFIG.FIXED_THETA);
-    const y = CAMERA_CONFIG.RADIUS * Math.cos(CAMERA_CONFIG.FIXED_PHI);
-    const z = CAMERA_CONFIG.RADIUS * Math.sin(CAMERA_CONFIG.FIXED_PHI) * Math.sin(CAMERA_CONFIG.FIXED_THETA);
   
-    camera.position.set(x, y, z);
+    camera.position.set(CAMERA_CONFIG.X, CAMERA_CONFIG.Y,CAMERA_CONFIG.Z);
     camera.lookAt(0, 0, 0); // Look at grid center
   }
   
