@@ -9,7 +9,7 @@ document.getElementById('game-container').appendChild(renderer.domElement);
 
 // Camera setup with orbital constraints
 const CAMERA_RADIUS = 15;
-const MIN_POLAR_ANGLE = 30 * Math.PI / 180;  // 30 degrees (more downward tilt allowed)
+const MIN_POLAR_ANGLE = 0 * Math.PI / 180;  // 30 degrees (more downward tilt allowed)
 const MAX_POLAR_ANGLE = 120 * Math.PI / 180;  // 60 degrees (original downward limit)
 let cameraAngle = {
   theta: -45 * Math.PI / 180,  // Start facing the grid head-on
