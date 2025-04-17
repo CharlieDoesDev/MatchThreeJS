@@ -3,12 +3,12 @@
  *****************************/
 const CAMERA_CONFIG = {
     RADIUS: 15,                          // Distance from grid center
-    MIN_POLAR_ANGLE: -60 * Math.PI / 180, // 30 degrees (minimum vertical tilt)
-    MAX_POLAR_ANGLE: 0 * Math.PI / 180, // 60 degrees (maximum vertical tilt)
+    MIN_POLAR_ANGLE: -180 * Math.PI / 180, // 30 degrees (minimum vertical tilt)
+    MAX_POLAR_ANGLE: -20 * Math.PI / 180, // 60 degrees (maximum vertical tilt)
     MIN_AZIMUTH_ANGLE: 0 * Math.PI / 180, // -45 degrees (left rotation limit)
     MAX_AZIMUTH_ANGLE: 180 * Math.PI / 180,  // 45 degrees (right rotation limit)
-    INITIAL_THETA: 100,                     // Starting horizontal angle
-    INITIAL_PHI: 45 * Math.PI / 180,      // Starting vertical angle
+    INITIAL_THETA: 90,                     // Starting horizontal angle
+    INITIAL_PHI: -45 * Math.PI / 180,      // Starting vertical angle
     LERP_FACTOR: 0.1,                     // Camera movement smoothness
     MOUSE_SENSITIVITY: 0.005
   };
