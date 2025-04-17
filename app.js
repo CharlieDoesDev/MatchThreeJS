@@ -2,15 +2,10 @@
  * CONFIGURATION VARIABLES
  *****************************/
 const CAMERA_CONFIG = {
-    RADIUS: 20,                          // Increased distance to see full grid
-    MIN_POLAR_ANGLE: 30 * Math.PI / 180, // 30 degrees (minimum vertical tilt)
-    MAX_POLAR_ANGLE: 80 * Math.PI / 180, // 80 degrees (maximum vertical tilt)
-    MIN_AZIMUTH_ANGLE: -45 * Math.PI / 180, // -45 degrees (left rotation limit)
-    MAX_AZIMUTH_ANGLE: 45 * Math.PI / 180,  // 45 degrees (right rotation limit)
-    INITIAL_THETA: 0,                    // Front-facing start
-    INITIAL_PHI: 60 * Math.PI / 180,     // 60 degree downward angle
-    LERP_FACTOR: 0.1,
-    MOUSE_SENSITIVITY: 0.005
+    RADIUS: 25,                          // Distance from grid center
+    FIXED_THETA: 0,                      // Front-facing angle
+    FIXED_PHI: 60 * Math.PI / 180,       // 60 degree downward angle
+    ASPECT_RATIO: window.innerWidth / window.innerHeight
   };
   
   const GRID_CONFIG = {
@@ -24,8 +19,12 @@ const CAMERA_CONFIG = {
    *****************************/
   const scene = new THREE.Scene();
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  const cameraTarget = new THREE.Vector3(0, 0, 0);
+  const camera = new THREE.PerspectiveCamera(
+    45,
+    CAMERA_CONFIG.ASPECT_RATIO,
+    0.1,
+    1000
+  );
   
   // Initialize renderer
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -33,33 +32,16 @@ const CAMERA_CONFIG = {
   document.getElementById('game-container').appendChild(renderer.domElement);
   
   /*****************************
-   * CAMERA SYSTEM
+   * CAMERA POSITIONING
    *****************************/
-  let cameraAngle = {
-    theta: CAMERA_CONFIG.INITIAL_THETA,
-    phi: CAMERA_CONFIG.INITIAL_PHI
-  };
-  
-  let targetCameraAngle = { ...cameraAngle };
-  
-  function updateCameraPosition() {
-    // Apply rotation constraints
-    targetCameraAngle.theta = Math.max(CAMERA_CONFIG.MIN_AZIMUTH_ANGLE, 
-      Math.min(CAMERA_CONFIG.MAX_AZIMUTH_ANGLE, targetCameraAngle.theta));
-    targetCameraAngle.phi = Math.max(CAMERA_CONFIG.MIN_POLAR_ANGLE, 
-      Math.min(CAMERA_CONFIG.MAX_POLAR_ANGLE, targetCameraAngle.phi));
-  
-    // Smoothly interpolate angles
-    cameraAngle.theta += (targetCameraAngle.theta - cameraAngle.theta) * CAMERA_CONFIG.LERP_FACTOR;
-    cameraAngle.phi += (targetCameraAngle.phi - cameraAngle.phi) * CAMERA_CONFIG.LERP_FACTOR;
-  
+  function setFixedCamera() {
     // Convert spherical to cartesian coordinates
-    const x = CAMERA_CONFIG.RADIUS * Math.sin(cameraAngle.phi) * Math.cos(cameraAngle.theta);
-    const y = CAMERA_CONFIG.RADIUS * Math.cos(cameraAngle.phi);
-    const z = CAMERA_CONFIG.RADIUS * Math.sin(cameraAngle.phi) * Math.sin(cameraAngle.theta);
+    const x = CAMERA_CONFIG.RADIUS * Math.sin(CAMERA_CONFIG.FIXED_PHI) * Math.cos(CAMERA_CONFIG.FIXED_THETA);
+    const y = CAMERA_CONFIG.RADIUS * Math.cos(CAMERA_CONFIG.FIXED_PHI);
+    const z = CAMERA_CONFIG.RADIUS * Math.sin(CAMERA_CONFIG.FIXED_PHI) * Math.sin(CAMERA_CONFIG.FIXED_THETA);
   
     camera.position.set(x, y, z);
-    camera.lookAt(cameraTarget);
+    camera.lookAt(0, 0, 0); // Look at grid center
   }
   
   /*****************************
@@ -99,39 +81,15 @@ const CAMERA_CONFIG = {
   }
   
   /*****************************
-   * INPUT HANDLING
+   * INITIAL SETUP
    *****************************/
-  let isDragging = false;
-  let previousMouse = { x: 0, y: 0 };
-  
-  renderer.domElement.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    previousMouse = { x: e.clientX, y: e.clientY };
-  });
-  
-  renderer.domElement.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-  
-    const delta = {
-      x: e.clientX - previousMouse.x,
-      y: e.clientY - previousMouse.y
-    };
-  
-    targetCameraAngle.theta -= delta.x * CAMERA_CONFIG.MOUSE_SENSITIVITY;
-    targetCameraAngle.phi += delta.y * CAMERA_CONFIG.MOUSE_SENSITIVITY;
-  
-    previousMouse = { x: e.clientX, y: e.clientY };
-  });
-  
-  renderer.domElement.addEventListener('mouseup', () => isDragging = false);
-  renderer.domElement.addEventListener('mouseleave', () => isDragging = false);
+  setFixedCamera(); // Set static camera position
   
   /*****************************
    * ANIMATION LOOP
    *****************************/
   function animate() {
     requestAnimationFrame(animate);
-    updateCameraPosition();
     renderer.render(scene, camera);
   }
   animate();
