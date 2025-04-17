@@ -4,7 +4,7 @@
 const CAMERA_CONFIG = {
     RADIUS: 25,                          // Distance from grid center
     FIXED_THETA: 0,                      // Front-facing angle
-    FIXED_PHI: 90 * Math.PI / 180,       // 60 degree downward angle
+    FIXED_PHI: 0 * Math.PI / 180,       // 60 degree downward angle
     ASPECT_RATIO: window.innerWidth / window.innerHeight
   };
   
