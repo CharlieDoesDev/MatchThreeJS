@@ -1,110 +1,58 @@
-/*****************************
- * CONFIGURATION VARIABLES
- *****************************/
-const CAMERA_CONFIG = {
-    X: 0,
-    Y:0,
-    Z: -10,
-    ASPECT_RATIO: window.innerWidth / window.innerHeight
-  };
-  
-  const GRID_CONFIG = {
-    SIZE: 8,
-    CUBE_SIZE: 1,
-    SPACING: 1.2
-  };
-  
-  /*****************************
-   * SCENE SETUP
-   *****************************/
-  const scene = new THREE.Scene();
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    CAMERA_CONFIG.ASPECT_RATIO,
-    0.1,
-    1000
-  );
-  
-  // Initialize renderer
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setClearColor(0xeeeeee);
-  document.getElementById('game-container').appendChild(renderer.domElement);
-  
-  /*****************************
-   * CAMERA POSITIONING
-   *****************************/
-  function setFixedCamera() {
-  
-    camera.position.set(CAMERA_CONFIG.X, CAMERA_CONFIG.Y,CAMERA_CONFIG.Z);
-    camera.lookAt(0, 0, 0); // Look at grid center
-  }
-  
-  /*****************************
-   * LIGHTING
-   *****************************/
-  scene.add(new THREE.AmbientLight(0xffffff, 0.5));
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  directionalLight.position.set(10, 10, 10);
-  scene.add(directionalLight);
-  
-  /*****************************
-   * GRID SYSTEM
-   *****************************/
-  const cubes = [];
-  const gridCenterOffset = (GRID_CONFIG.SIZE * GRID_CONFIG.CUBE_SIZE * GRID_CONFIG.SPACING) / 2;
-  
-  for (let x = 0; x < GRID_CONFIG.SIZE; x++) {
-    cubes[x] = [];
-    for (let y = 0; y < GRID_CONFIG.SIZE; y++) {
-      const geometry = new THREE.BoxGeometry(GRID_CONFIG.CUBE_SIZE, GRID_CONFIG.CUBE_SIZE, GRID_CONFIG.CUBE_SIZE);
-      const material = new THREE.MeshStandardMaterial({
-        color: new THREE.Color().setHSL(Math.random(), 0.7, 0.5),
-        metalness: 0.1,
-        roughness: 0.5
-      });
-      
-      const cube = new THREE.Mesh(geometry, material);
-      cube.position.set(
-        x * GRID_CONFIG.CUBE_SIZE * GRID_CONFIG.SPACING - gridCenterOffset,
-        y * GRID_CONFIG.CUBE_SIZE * GRID_CONFIG.SPACING - gridCenterOffset,
-        0
-      );
-      
-      scene.add(cube);
-      cubes[x][y] = cube;
-    }
-  }
-  
-  /*****************************
-   * INITIAL SETUP
-   *****************************/
-  setFixedCamera(); // Set static camera position
-  
-  /*****************************
-   * ANIMATION LOOP
-   *****************************/
-  function animate() {
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-  }
-  animate();
-  
-  /*****************************
-   * WINDOW RESIZE HANDLER
-   *****************************/
-  window.addEventListener('resize', () => {
+import { GridManager } from './grid/GridManager.js';
+
+// Scene setup
+const scene = new THREE.Scene();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+// Initialize systems
+const gridManager = new GridManager();
+gridManager.getObjects().forEach(obj => scene.add(obj));
+
+// Camera setup
+camera.position.set(0, 0, -20);
+camera.lookAt(0, 0, 0);
+
+// Lighting
+scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+directionalLight.position.set(10, 10, 10);
+scene.add(directionalLight);
+
+// Renderer setup
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0xeeeeee);
+document.getElementById('game-container').appendChild(renderer.domElement);
+
+// Event listeners
+window.addEventListener('resize', onWindowResize);
+window.addEventListener('mousemove', onMouseMove);
+
+function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-  
-  /*****************************
-   * DEBUGGING (TEMPORARY)
-   *****************************/
-  window.addEventListener('click', (e) => {
-    // Random cube color change test
-    const randomX = Math.floor(Math.random() * GRID_CONFIG.SIZE);
-    const randomY = Math.floor(Math.random() * GRID_CONFIG.SIZE);
-    cubes[randomX][randomY].material.color.setHSL(Math.random(), 0.7, 0.5);
-  });
+}
+
+function onMouseMove(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+// Animation loop
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Update hover states
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(gridManager.getObjects());
+    gridManager.handleHover(intersects);
+    
+    // Update cubes
+    gridManager.update();
+    
+    renderer.render(scene, camera);
+}
+animate();
