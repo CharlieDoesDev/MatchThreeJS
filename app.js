@@ -2,21 +2,21 @@
  * CONFIGURATION VARIABLES
  *****************************/
 const CAMERA_CONFIG = {
-    RADIUS: 15,                          // Distance from grid center
-    MIN_POLAR_ANGLE: -180 * Math.PI / 180, // 30 degrees (minimum vertical tilt)
-    MAX_POLAR_ANGLE: -20 * Math.PI / 180, // 60 degrees (maximum vertical tilt)
-    MIN_AZIMUTH_ANGLE: 0 * Math.PI / 180, // -45 degrees (left rotation limit)
-    MAX_AZIMUTH_ANGLE: 180 * Math.PI / 180,  // 45 degrees (right rotation limit)
-    INITIAL_THETA: 90,                     // Starting horizontal angle
-    INITIAL_PHI: -45 * Math.PI / 180,      // Starting vertical angle
-    LERP_FACTOR: 0.1,                     // Camera movement smoothness
+    RADIUS: 20,                          // Increased distance to see full grid
+    MIN_POLAR_ANGLE: 30 * Math.PI / 180, // 30 degrees (minimum vertical tilt)
+    MAX_POLAR_ANGLE: 80 * Math.PI / 180, // 80 degrees (maximum vertical tilt)
+    MIN_AZIMUTH_ANGLE: -45 * Math.PI / 180, // -45 degrees (left rotation limit)
+    MAX_AZIMUTH_ANGLE: 45 * Math.PI / 180,  // 45 degrees (right rotation limit)
+    INITIAL_THETA: 0,                    // Front-facing start
+    INITIAL_PHI: 60 * Math.PI / 180,     // 60 degree downward angle
+    LERP_FACTOR: 0.1,
     MOUSE_SENSITIVITY: 0.005
   };
   
   const GRID_CONFIG = {
-    SIZE: 8,                             // 8x8 grid
+    SIZE: 8,
     CUBE_SIZE: 1,
-    SPACING: 1.2                         // Space between cubes
+    SPACING: 1.2
   };
   
   /*****************************
